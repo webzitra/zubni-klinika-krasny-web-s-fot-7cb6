@@ -26,9 +26,11 @@ export async function GET() {
       .filter(s => s.length > 0 && !s.startsWith("--"));
 
     for (const stmt of statements) {
-      await supabase.rpc("exec_sql", { sql: stmt + ";" }).catch(() => {
+      try {
+        await supabase.rpc("exec_sql", { sql: stmt + ";" });
+      } catch {
         // Table may already exist — IF NOT EXISTS handles this
-      });
+      }
     }
 
     migrationRun = true;
